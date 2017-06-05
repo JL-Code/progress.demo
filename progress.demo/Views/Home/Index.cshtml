@@ -1,0 +1,14 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <label id="timeSpent"></label>
+        下载进度:<label id="progressLab"></label>%
+    </div>
+</div>
+@section scripts{
+    <!--必须引用SignalR库-->
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <!--引用自动生成的SignalR 集线器脚本 -->
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Scripts/signalr.progress.js"></script>
+}
+
