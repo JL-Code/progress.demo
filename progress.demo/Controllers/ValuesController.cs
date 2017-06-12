@@ -22,40 +22,11 @@ namespace progress.demo.Controllers
         {
             Clients = GlobalHost.ConnectionManager.GetHubContext<ProgressTipHub>().Clients;
         }
-        public string Get()
-        {
-            return "测试";
-        }
         /// <summary>
         /// 下载文件
         /// </summary>
         /// <returns></returns>
         [Route("api/values/resource")]
-        [HttpGet]
-        public IHttpActionResult Resource()
-        {
-            var browser = String.Empty;
-            if (HttpContext.Current.Request.UserAgent != null)
-            {
-                browser = HttpContext.Current.Request.UserAgent.ToUpper();
-            }
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content", "bootstrap.css");
-            HttpResponseMessage httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-            FileStream fileStream = File.OpenRead(filePath);
-            httpResponseMessage.Content = new StreamContent(fileStream);
-            httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-            httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-            {
-                FileName =
-                    browser.Contains("FIREFOX")
-                        ? Path.GetFileName(filePath)
-                        : HttpUtility.UrlEncode(Path.GetFileName(filePath))
-            };
-
-            return ResponseMessage(httpResponseMessage);
-        }
-
-        [Route("api/values/progress")]
         [HttpGet]
         public IHttpActionResult Progress(string name)
         {
@@ -64,17 +35,25 @@ namespace progress.demo.Controllers
                 var downUri = @"http://123.147.165.14:9999/sw.bos.baidu.com/sw-search-sp/software/5d7946e712c83/npp_7.4.1_Installer.exe";
                 if (!string.IsNullOrEmpty(name))
                 {
-                    downUri = @"http://localhost:62208/api/values/file?name=" + name;
+                    downUri = @"http://dev.highzap.com/dev_auth/api/values/file?name=" + name;
                 }
-                var destinationFilePath = @"C:\Users\jiang\Documents\Visual Studio 2017\Projects\progress.demo";
+                var destinationFilePath = @"E:\00_Workspace\My Project\progress.demo";
                 StartTime = DateTime.Now;
-                var downloader = new Downloader(downUri, destinationFilePath, name);
-                while (!downloader.IsCompleted)
+                using (var downloader = new Downloader(downUri, destinationFilePath, name))
                 {
-                    downloader.Download();
-                    new ShowProgressDelegate(ShowProgressBySignalR).Invoke(100, (int)downloader.CurrentProgress);
+                    while (!downloader.IsCompleted)
+                    {
+                        downloader.Download();
+                        new ShowProgressDelegate(ShowProgressBySignalR).Invoke(100, (int)downloader.CurrentProgress);
+                    }
                 }
-                downloader.Dispose();
+                //var downloader = new Downloader(downUri, destinationFilePath, name);
+                //while (!downloader.IsCompleted)
+                //{
+                //    downloader.Download();
+                //    new ShowProgressDelegate(ShowProgressBySignalR).Invoke(100, (int)downloader.CurrentProgress);
+                //}
+                //downloader.Dispose();
             }
             catch (Exception ex)
             {
