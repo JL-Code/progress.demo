@@ -112,5 +112,11 @@ namespace progress.tests
             var txt = Encoding.UTF8.GetString(result.Content);
             Console.WriteLine(txt);
         }
+
+        [TestMethod]
+        public void MyTestMethod()
+        {
+            var test1 = new Test1();
+        }
     }
 }

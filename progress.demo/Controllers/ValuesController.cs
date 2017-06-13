@@ -35,7 +35,7 @@ namespace progress.demo.Controllers
                 var downUri = @"http://123.147.165.14:9999/sw.bos.baidu.com/sw-search-sp/software/5d7946e712c83/npp_7.4.1_Installer.exe";
                 if (!string.IsNullOrEmpty(name))
                 {
-                    downUri = @"http://dev.highzap.com/dev_auth/api/values/file?name=" + name;
+                    downUri = @"http://localhost:35156/api/package/file?name=" + name;
                 }
                 var destinationFilePath = @"E:\00_Workspace\My Project\progress.demo";
                 StartTime = DateTime.Now;
@@ -47,13 +47,6 @@ namespace progress.demo.Controllers
                         new ShowProgressDelegate(ShowProgressBySignalR).Invoke(100, (int)downloader.CurrentProgress);
                     }
                 }
-                //var downloader = new Downloader(downUri, destinationFilePath, name);
-                //while (!downloader.IsCompleted)
-                //{
-                //    downloader.Download();
-                //    new ShowProgressDelegate(ShowProgressBySignalR).Invoke(100, (int)downloader.CurrentProgress);
-                //}
-                //downloader.Dispose();
             }
             catch (Exception ex)
             {
