@@ -25,69 +25,6 @@ namespace progress.tests
         {
             Clients = GlobalHost.ConnectionManager.GetHubContext<ProgressTipHub>().Clients;
         }
-        [TestMethod]
-        public void DownloadTest()
-        {
-            Download();
-        }
-        public async void Download()
-        {
-            var downUri = "http://123.147.165.14:9999/sw.bos.baidu.com/sw-search-sp/software/5d7946e712c83/npp_7.4.1_Installer.exe";
-            var destinationFilePath = @"C:\Users\jiang\Documents\Visual Studio 2017\Projects\progress.demo\npp_7.4.1_Installer.exe";
-            try
-            {
-                using (var client = new HttpClientDownloadWithProgress(downUri, destinationFilePath))
-                {
-                    client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
-                    {
-                        Console.WriteLine($"{progressPercentage}% ({totalBytesDownloaded}/{totalFileSize})");
-                    };
-                    await client.StartDownload();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        [TestMethod]
-        public void PartialDownload_WebAPI_NotNull()
-        {
-            var downUri = "http://123.147.165.14:9999/sw.bos.baidu.com/sw-search-sp/software/5d7946e712c83/npp_7.4.1_Installer.exe";
-            downUri = @"http://localhost:62208/api/values/file";
-            var name = @"bootstrap.css";
-            var destinationFilePath = @"C:\Users\jiang\Documents\Visual Studio 2017\Projects\progress.demo";
-            StartTime = DateTime.Now;
-            var downloader = new Downloader(downUri, destinationFilePath, name);
-            try
-            {
-                while (!downloader.IsCompleted)
-                {
-                    downloader.Download();
-                    new ShowProgressDelegate(ShowProgressBySignalR).Invoke(100, (int)downloader.CurrentProgress);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
-
-        public void ShowProgress(int totalStep, int currentStep)
-        {
-            var diff = (DateTime.Now - StartTime);
-            Console.WriteLine($"进度:{currentStep}%");
-            var timeStr = $"当前已耗时：{diff.Hours}:{diff.Minutes}:{diff.Seconds}:{diff.Milliseconds}";
-            Console.WriteLine(timeStr);
-        }
-
-        public void ShowProgressBySignalR(int totalStep, int currentStep)
-        {
-            var diff = (DateTime.Now - StartTime);
-            var timeStr = $"当前已耗时：{diff.Hours}:{diff.Minutes}:{diff.Seconds}:{diff.Milliseconds}";
-            Clients.All.updateProgress(currentStep, timeStr);
-        }
 
         [TestMethod]
         public void RoadFile_TXT_IsReadable()
@@ -114,9 +51,20 @@ namespace progress.tests
         }
 
         [TestMethod]
-        public void MyTestMethod()
+        public void Compress()
         {
-            var test1 = new Test1();
+            CompressUtil.CompressFolder("E:\\ZapSoft", "E:\\03_ReleaseWebSite\\ZapSoft\\UpgradePackages\\ZapSoft.zip");
+            var flag = File.Exists("E:\\03_ReleaseWebSite\\ZapSoft\\UpgradePackages\\ZapSoft.zip");
+            Assert.AreEqual(flag, true);
+        }
+
+        [TestMethod]
+        public void Decompress()
+        {
+            CompressUtil.DecompressFile("E:\\ZapSoft.zip", "E:\\");
+            var flag = Directory.Exists("E:\\ZapSoft");
+            Directory.Move("E:\\ZapSoft", "E:\\Test");
+            Assert.AreEqual(flag, true);
         }
     }
 }
