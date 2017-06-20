@@ -24,5 +24,10 @@ namespace progress.demo.Controllers
         {
             return View();
         }
+
+        public ActionResult WindowsSignalrTest()
+        {
+            return View();
+        }
     }
 }
