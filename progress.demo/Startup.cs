@@ -1,4 +1,6 @@
-﻿using Owin;
+﻿using Microsoft.AspNet.SignalR;
+using Microsoft.Owin.Cors;
+using Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,18 @@ namespace progress.demo
     {
         public void Configuration(IAppBuilder app)
         {
-            app.MapSignalR();
+
+            app.Map("/signalr", map =>
+            {
+                map.UseCors(CorsOptions.AllowAll);
+                var hubConfiguration = new HubConfiguration
+                {
+                    EnableJSONP = true,
+                    EnableDetailedErrors = true
+                };
+                map.RunSignalR(hubConfiguration);
+            });
+
         }
     }
 }
