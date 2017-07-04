@@ -94,11 +94,20 @@ namespace progress.demo.Controllers
             }
         }
 
+        [Route("api/values/{id}")]
+        [HttpGet]
+        public IHttpActionResult File(string id)
+        {
+            return Ok(id);
+        }
+
         private void ShowProgressBySignalR(int totalStep, int currentStep)
         {
             var diff = (DateTime.Now - StartTime);
             var timeStr = $"当前已耗时：{diff.Hours}:{diff.Minutes}:{diff.Seconds}:{diff.Milliseconds}";
             Clients.All.updateProgress(currentStep, timeStr);
         }
+
+
     }
 }

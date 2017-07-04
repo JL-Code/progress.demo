@@ -32,7 +32,7 @@ namespace progress.demo.Controllers
 
         public async Task<ActionResult> WebConnectionSignalr()
         {
-            var manager = new SignalRManager("http://127.0.0.1:8000", "serviceMonitorHub");
+            var manager = new SignalRManager("http://127.0.0.1:8000", "siteUpgradeHub");
             await manager.StartAsync();
             manager.Hello("你好 我是web站点");
             return Content("");
